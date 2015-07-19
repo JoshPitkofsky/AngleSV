@@ -68,10 +68,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
     
       //menu_cell_basic_draw(ctx, cell_layer, list[cell_index->row].title, *list[cell_index->row].content, NULL);
     
-    
-      char *pointer = malloc(sizeof(char*20));
-        pointer = list[cell_index->row].title;
-    
       menu_cell_basic_draw(ctx, cell_layer, pointer, NULL,  NULL);
       //char *pointer;
       //pointer = list[cell_index->row].title[0];
@@ -124,6 +120,8 @@ static int getIndexOfPunctuation(char *originalString) {
 
   return i;
 }
+
+//gets index of commas 
 static int getIndexOfComma(char *originalString) {
   int length = strlen(originalString);
   int i = 0;
@@ -140,6 +138,7 @@ static int getIndexOfComma(char *originalString) {
   return i;
 }
 
+//GEts a substring
 static char *subString(char *originalString) {
   int j = getIndexOfPunctuation(originalString);
    printf("six");
@@ -156,6 +155,7 @@ static char *subTi(char *originalString) {
   return newString;
 }
 
+// Finds the position of commas in passed data
 static int findArray(char *originalString, int *commaPositions){
   
   printf("OriginalString in findArray %s", originalString);
@@ -176,6 +176,7 @@ static int findArray(char *originalString, int *commaPositions){
   return j;
 }
 
+// Attempts to return the title, but doesn't...
 static void returnTitle(char *originalTitles){
   printf("Original Text %s", originalTitles);
   
@@ -284,17 +285,22 @@ static void returnTitle(char *originalTitles){
   }*/
 }
 
+// loops words, breaks them from an overall string
 static void displayWords(char *originalString){
   printf("congratulations you have made it to the display words function");
   char *substring;
   while(originalString != NULL){
     substring = subString(originalString);
     printf("%s",substring);
-    //add sleepB
+    //add sleep
     str_cut(originalString, 0, strlen(substring)); 
   }
 }
 
+
+// Sends data relating to the chosen story, attempts to load word by word from the phone application
+// but in reality we couldn't figure out how to do this. Word for word because we focused on
+// speed reading techniques involving fixation points and saccades
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
   //SEND INDEX BACk
@@ -318,39 +324,12 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
     window_stack_push(window, true);
     while(g<30){
           static char s_body_text[18];
-  snprintf(s_body_text, sizeof(s_body_text), "%s", negFiveData);
-  text_layer_set_text(s_body_layer, s_body_text);
-    printf("THIRD");
-       psleep(200);
-        g++;
+          snprintf(s_body_text, sizeof(s_body_text), "%s", negFiveData);
+          text_layer_set_text(s_body_layer, s_body_text);
+          printf("THIRD");
+          psleep(200);
+          g++;
     }
-
-    
-	 /* // Set the text, font, and text alignment
-    text_layer_set_text(text_layer, "ASDFA");
-    text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-    text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-
-    printf("THIRD");
-    // Add the text layer to the window
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
-  
-
-      
-    // Push the window
-   window_stack_push(window, true);
-    
-    //psleep(2000);
-  while (true){
-      text_layer_set_text(text_layer, negFiveData);
-    
-    }
-    
-    for(int i=0; i<=5;i++){
-      text_layer_set_text(text_layer, list[0].content[i]);
-    psleep(200);
-    }
-    */
     
     }
 
@@ -359,11 +338,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 
 static void main_window_load(Window *window) {
   // Here we load the bitmap assets
-
-
-
   // And also load the background
-
   // Now we prepare to initialize the menu layer
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
@@ -385,6 +360,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));
 }
 
+// Unloads the menu
 static void main_window_unload(Window *window) {
   // Destroy the menu layer
   menu_layer_destroy(s_menu_layer);
@@ -398,18 +374,7 @@ static void main_window_unload(Window *window) {
 }
 
 
-////////////
-////////////
-
-///////////
-///////////
-
-
-
-///////////
-
-
-
+// Handles the reception of data from the application
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // Get the first pair
   Tuple *t = dict_read_first(iterator);
@@ -444,14 +409,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         negFiveData = t->value->cstring;
-   /*     int k=0;
-           while (k<20){
-      text_layer_set_text(text_layer, negFiveData);
-    k++;
-    }*/
         break;
         case -6:
-          //index #probs wont do
+          //index for where you left off in the reading
         break;
         
       }
@@ -474,6 +434,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 }
 
 // Handles data from the accelerometer
+// Groups different angles into different speeds
 static void data_handler(AccelData *data, uint32_t num_samples) {
   // Long lived buffer
   static char s_buffer[128];
@@ -496,12 +457,9 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
     "N %d", speedX
   );
 
-  //Show the data
- // printf("speedX %i", speedX);
-//  send_int(-2,speedX);
 }
 
-
+// initialize
 static void init() {
   // Register callbacks
     printf("callbacks start");
@@ -537,11 +495,13 @@ static void init() {
 
 }
 
+// Deinitialize 
 static void deinit() {
   // Destroy main Window
   window_destroy(s_main_window);
 }
 
+// main
 int main(void) {
   init();
   app_event_loop();
