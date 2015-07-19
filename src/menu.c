@@ -15,13 +15,14 @@ static GBitmap *s_menu_icons[NUM_MENU_ICONS];
 static GBitmap *s_background_bitmap;
 
 typedef struct {
-  char *title;
-  char *content;
+  char title[20];
 } article;
-
+ //char *josh = "Josh";
 int speedX; 
 
 article list[10];
+
+char *negFiveData;
 
 //static int s_current_icon = 0;
 
@@ -66,13 +67,22 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
       // Use the row to specify which item we'll draw
     
       //menu_cell_basic_draw(ctx, cell_layer, list[cell_index->row].title, *list[cell_index->row].content, NULL);
-      menu_cell_basic_draw(ctx, cell_layer, list[cell_index->row].title, list[cell_index->row].content, NULL);
+    
+    
+      char *pointer = malloc(sizeof(char*20));
+        pointer = list[cell_index->row].title;
+    
+      menu_cell_basic_draw(ctx, cell_layer, pointer, NULL,  NULL);
+      //char *pointer;
+      //pointer = list[cell_index->row].title[0];
+
+
       break;
     case 1:
       switch (cell_index->row) {
         case 0:
           // There is title draw for something more simple than a basic menu item
-          menu_cell_title_draw(ctx, cell_layer, "Final Item");
+          menu_cell_title_draw(ctx, cell_layer, "Secrets");
           break;
       }
   }
@@ -166,7 +176,7 @@ static int findArray(char *originalString, int *commaPositions){
   return j;
 }
 
-static void returnTitle(char *originalTitles, article *titleArray){
+static void returnTitle(char *originalTitles){
   printf("Original Text %s", originalTitles);
   
   int length = strlen(originalTitles);
@@ -184,26 +194,24 @@ static void returnTitle(char *originalTitles, article *titleArray){
   for (int i = 0; i<numberOfCommas; i++){
     printf("Comma Array in Return Title %i", commaArray[i]);
   }
-  
-  
-  
+   
   int k = 0;
   int j = 0;
   printf("Right before the while loop");
-  int startIndex = -1;
+  int startIndex = 0;
   
-  for (int i = 0; i <= numberOfCommas; i++) {
-    int endIndex = commaArray[i]-1;
-    char substr[endIndex-startIndex];
+  for (int i = 0; i < numberOfCommas; i++) {
+    int endIndex = commaArray[i];
+    int sublength = endIndex-startIndex;
+    char substr[sublength];
     
-    strncpy(substr,&originalTitles[startIndex+1],endIndex-startIndex);
+    strncpy(substr,&originalTitles[startIndex],sublength);
     printf("substr = %s",substr );
-    startIndex = endIndex;
-  } 
-  char substr[length-1-startIndex];
-  strncpy(substr,&originalTitles[startIndex+1],length-1);
-  printf("substr = %s",substr );
-   
+    
+    memcpy(list[i].title,subString, sublength);
+    startIndex = endIndex+1;
+    printf("%s", originalTitles);
+  }    
   /*
   while (){
     printf("While loop %i", j);
@@ -283,30 +291,43 @@ static void displayWords(char *originalString){
     substring = subString(originalString);
     printf("%s",substring);
     //add sleepB
-    str_cut(originalString, 0, strlen(substring));
-    
+    str_cut(originalString, 0, strlen(substring)); 
   }
 }
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
-  //SEND INDEX BACK
-  
-  
+  //SEND INDEX BACk
   
   printf("FIRST");
   // Use the row to specify which item will receive the select action
   if(cell_index->section == 0) {
     Window *window = window_create();
-	  TextLayer *text_layer = text_layer_create(GRect(0, 0, 144, 154));
+	  static TextLayer  *text_layer, *s_header_layer, *s_body_layer, *s_label_layer;
     printf("SECOND");
     
     send_int(-1,cell_index->row);
-    
+    int g=0;
+   
+    // Add the text layer to the window
+    layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
+    text_layer_set_text(text_layer, "negFiveData");
+    text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+    text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+    // Push the window
+    window_stack_push(window, true);
+    while(g<30){
+          static char s_body_text[18];
+  snprintf(s_body_text, sizeof(s_body_text), "%s", negFiveData);
+  text_layer_set_text(s_body_layer, s_body_text);
+    printf("THIRD");
+       psleep(200);
+        g++;
+    }
 
     
-	  // Set the text, font, and text alignment
-    text_layer_set_text(text_layer, list[cell_index->row].content);
+	 /* // Set the text, font, and text alignment
+    text_layer_set_text(text_layer, "ASDFA");
     text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
     text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
 
@@ -320,12 +341,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
    window_stack_push(window, true);
     
     //psleep(2000);
-    //text_layer_set_text(text_layer, "For Real");
-    /*for(int i=0; i<=5;i++){
+  while (true){
+      text_layer_set_text(text_layer, negFiveData);
+    
+    }
+    
+    for(int i=0; i<=5;i++){
       text_layer_set_text(text_layer, list[0].content[i]);
     psleep(200);
-    }*/
-    
+    }
+    */
     
     }
 
@@ -334,7 +359,8 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 
 static void main_window_load(Window *window) {
   // Here we load the bitmap assets
-  
+
+
 
   // And also load the background
 
@@ -398,11 +424,16 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
          // Copy value
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         article one;
-  
-        one.title = t->value->cstring;
-        returnTitle(one.title, list);
+
+        //printf("one title %s", one.title);
+        printf("t value %s", t->value->cstring);
+        memcpy(one.title, t->value->cstring, 10);
+        printf("one title two %s", one.title);
+        printf("t value %s", t->value->cstring);
+        //one.title = t->value->cstring;
+        returnTitle(one.title);
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
           printf("list %s", list[i].title);
         }
         
@@ -410,6 +441,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         case -5:
           //code to display content
         //call content functions here display words
+        
+        snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
+        negFiveData = t->value->cstring;
+   /*     int k=0;
+           while (k<20){
+      text_layer_set_text(text_layer, negFiveData);
+    k++;
+    }*/
         break;
         case -6:
           //index #probs wont do
@@ -470,6 +509,7 @@ static void init() {
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
+  
 
   // Open AppMessage
     printf("congratulations you have made it to open appmessage");
@@ -478,13 +518,13 @@ static void init() {
   
   // Accelerometer initialization
   speedX = 0;
+
   
   int num_samples = 3;
   accel_data_service_subscribe(num_samples, data_handler);
 
   // Choose update rate
   accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
-  
   
   
   // Create main Window
