@@ -45,6 +45,7 @@ static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t s
 }
 
 static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
+   printf("zero");
   // Determine which section we're working with
   switch (section_index) {
     case 0:
@@ -59,6 +60,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
   // Determine which section we're going to draw in
+   printf("one");
   switch (cell_index->section) {
     case 0:
       // Use the row to specify which item we'll draw
@@ -85,6 +87,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 
 
 static void send_int(int key, int value) {
+   printf("two");
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
   dict_write_int(iter, key, &value, sizeof(int), true);
@@ -92,7 +95,7 @@ static void send_int(int key, int value) {
 }
 
 static void str_cut(char *str, int begin, int len)
-{
+{ printf("three");
     int l = strlen(str);
 
     if (len < 0) len = l - begin;
@@ -104,7 +107,7 @@ static void str_cut(char *str, int begin, int len)
 // returns index of first coming punctuation or space
 static int getIndexOfPunctuation(char *originalString) {
   int i = 0;
-  
+   printf("four");
   while(originalString[i] != ' ' && originalString[i] != '.' && originalString[i] != ',' && originalString[i] != '!') {
     i++;
   } 
@@ -113,7 +116,7 @@ static int getIndexOfPunctuation(char *originalString) {
 }
 static int getIndexOfComma(char *originalString) {
   int i = 0;
-  
+   printf("five");
   while(originalString[i] != ',') {
     i++;
   } 
@@ -123,28 +126,32 @@ static int getIndexOfComma(char *originalString) {
 
 static char *subString(char *originalString) {
   int j = getIndexOfPunctuation(originalString);
-  
+   printf("six");
   char *newString="";
   newString = strncpy(newString, originalString, j);
   return newString;
 }
 static char *subTi(char *originalString) {
   int j = getIndexOfComma(originalString);
-  
+   printf("seven");
   char *newString="";
   newString = strncpy(newString, originalString, j);
   return newString;
 }
 
 static void returnTitle(char *originalTitles, article *titleArray){
-    
+     printf("eight");
   char *substring;
   int i = 0;
-  while(strcmp(originalTitles, "")==0){
+  while(strcmp(originalTitles, "")!=0){
+     printf("nine");
     printf("before cut %s",originalTitles);
     substring = subTi(originalTitles);
+     printf("ten");
+    strncpy(originalTitles, &originalTitles[strlen(substring)], sizeof(&originalTitles));
     str_cut(originalTitles, 0, strlen(substring));
-     printf("this is after cuting %s",originalTitles);
+     printf("eleven");
+    printf("this is after cuting %s",originalTitles);
     article newArticle;
     
     newArticle.title = substring;
