@@ -91,7 +91,7 @@ static void send_int(int key, int value) {
   app_message_outbox_send();
 }
 
-int str_cut(char *str, int begin, int len)
+static void str_cut(char *str, int begin, int len)
 {
     int l = strlen(str);
 
@@ -99,7 +99,6 @@ int str_cut(char *str, int begin, int len)
     if (begin + len > l) len = l - begin;
     memmove(str + begin, str + begin + len, l - len + 1);
 
-    return len;
 }
 
 // returns index of first coming punctuation or space
@@ -107,6 +106,15 @@ static int getIndexOfPunctuation(char *originalString) {
   int i = 0;
   
   while(originalString[i] != ' ' && originalString[i] != '.' && originalString[i] != ',' && originalString[i] != '!') {
+    i++;
+  } 
+
+  return i;
+}
+static int getIndexOfComma(char *originalString) {
+  int i = 0;
+  
+  while(originalString[i] != ',') {
     i++;
   } 
 
@@ -120,23 +128,34 @@ static char *subString(char *originalString) {
   newString = strncpy(newString, originalString, j);
   return newString;
 }
+static char *subTi(char *originalString) {
+  int j = getIndexOfComma(originalString);
+  
+  char *newString="";
+  newString = strncpy(newString, originalString, j);
+  return newString;
+}
 
 static void returnTitle(char *originalTitles, article *titleArray){
     
   char *substring;
   int i = 0;
-  while(originalTitles != NULL){
-    substring = subString(originalTitles);
+  while(strcmp(originalTitles, "")==0){
+    printf("before cut %s",originalTitles);
+    substring = subTi(originalTitles);
     str_cut(originalTitles, 0, strlen(substring));
+     printf("this is after cuting %s",originalTitles);
     article newArticle;
     
     newArticle.title = substring;
     titleArray[i] = newArticle;
-    i++;
+      printf("I is about to be incremented and is now,%i", i);
+      i++;
   }
 }
 
 static void displayWords(char *originalString){
+  printf("congratulations you have made it to the display words function");
   char *substring;
   while(originalString != NULL){
     substring = subString(originalString);
@@ -244,6 +263,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
          // Copy value
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         article one;
+          printf("article one was instatiated");
         one.title = t->value->cstring;
         returnTitle(one.title, list);
         
@@ -299,19 +319,21 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
   );
 
   //Show the data
-  printf("speedX %i", speedX);
-  send_int(-2,speedX);
+ // printf("speedX %i", speedX);
+//  send_int(-2,speedX);
 }
 
 
 static void init() {
   // Register callbacks
+    printf("callbacks start");
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
 
   // Open AppMessage
+    printf("congratulations you have made it to open appmessage");
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 
   
