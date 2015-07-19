@@ -4,6 +4,7 @@
  */
 
 #include <pebble.h>
+#define KEY_DATA 5
 #define NUM_MENU_SECTIONS 2
 #define NUM_MENU_ICONS 3
 #define NUM_FIRST_MENU_ITEMS 2
@@ -157,17 +158,18 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *t = dict_read_first(iterator);
 
   // Process all pairs present
+  int i = 0;
   while (t != NULL) {
     // Long lived buffer
     static char s_buffer[64];
+
         // Copy value and display
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         //text_layer_set_text(s_output_layer, s_buffer);
-        for (int i = 0; i<10; i++) {
-          article one;
-          one.title = t->value->cstring;
-          list[i] = one;
-        }
+        article one;
+        one.title = t->value->cstring;
+        list[i] = one;
+        i++;
 
     // Get next pair, if any
     t = dict_read_next(iterator);
