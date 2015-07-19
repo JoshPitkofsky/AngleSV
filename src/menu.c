@@ -121,6 +121,21 @@ static char *subString(char *originalString) {
   return newString;
 }
 
+static void returnTitle(char *originalTitles, article *titleArray){
+    
+  char *substring;
+  int i = 0;
+  while(originalTitles != NULL){
+    substring = subString(originalTitles);
+    str_cut(originalTitles, 0, strlen(substring));
+    article newArticle;
+    
+    newArticle.title = substring;
+    titleArray[i] = newArticle;
+    i++;
+  }
+}
+
 static void displayWords(char *originalString){
   
   char *substring;
@@ -220,7 +235,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *t = dict_read_first(iterator);
 
   // Process all pairs present
-  int i = 0;
   while (t != NULL) {
     // Long lived buffer
     static char s_buffer[64];
@@ -231,8 +245,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         article one;
         one.title = t->value->cstring;
-        list[i] = one;
-        i++;
+        returnTitle(one.title, list);
         
         break;
         case -5:
