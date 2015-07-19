@@ -80,6 +80,8 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 // Must 
 // 1) Send the index of item back to the app
 // 2) Start moving through received text
+// -1 row
+// -2 speed
 
 
 static void send_int(int key, int value) {
@@ -223,7 +225,7 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
     
   } else if (avgData <= -10 && avgData > -20) {
     speedX = -5;
-  } else if (avgData <= -20{
+  } else if (avgData <= -20){
     speedX = -10;
   } else if (avgData >= 10 && avgData <20) {
     speedX = 5;
