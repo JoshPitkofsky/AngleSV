@@ -221,15 +221,15 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 
   float avgData = (data[0].x + data[1].x + data[2].x)/3;
   
-  if (avgData > -10 && avgData < 10) {
+  if (avgData > -100 && avgData < 100) {
     
-  } else if (avgData <= -10 && avgData > -20) {
+  } else if (avgData <= -100 && avgData > -200) {
     speedX = -5;
-  } else if (avgData <= -20){
+  } else if (avgData <= -200){
     speedX = -10;
-  } else if (avgData >= 10 && avgData <20) {
+  } else if (avgData >= 100 && avgData <200) {
     speedX = 5;
-  } else if (avgData >= 20) {
+  } else if (avgData >= 200) {
     speedX = 10;
   }
   
