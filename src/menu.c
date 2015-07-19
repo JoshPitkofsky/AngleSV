@@ -239,7 +239,9 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 
   //Show the data
   printf("speedX %i", speedX);
+  send_int(-2,speedX);
 }
+
 
 static void init() {
   // Register callbacks
