@@ -80,6 +80,15 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 // Must 
 // 1) Send the index of item back to the app
 // 2) Start moving through received text
+
+
+static void send_int(int key, int value) {
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  dict_write_int(iter, key, &value, sizeof(int), true);
+  app_message_outbox_send();
+}
+
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
   //SEND INDEX BACK
@@ -93,6 +102,9 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 	  TextLayer *text_layer = text_layer_create(GRect(0, 0, 144, 154));
     printf("SECOND");
     
+    send_int(-1,cell_index->row);
+    
+
     
 	  // Set the text, font, and text alignment
     text_layer_set_text(text_layer, list[cell_index->row].content);
