@@ -79,10 +79,12 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 // Called when an item is selected
 // Must 
 // 1) Send the index of item back to the app
-// 2) 
+// 2) Start moving through received text
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
   //SEND INDEX BACK
+  
+  
   
   printf("FIRST");
   // Use the row to specify which item will receive the select action
