@@ -115,11 +115,17 @@ static int getIndexOfPunctuation(char *originalString) {
   return i;
 }
 static int getIndexOfComma(char *originalString) {
+  int length = strlen(originalString);
   int i = 0;
-   printf("five");
-  while(originalString[i] != ',') {
+  int keepGoing = 1;
+  while(originalString[i] != ',' && keepGoing) {
     i++;
-  } 
+    if (i >= length){
+      keepGoing = 0;
+      i--;
+    }
+  }
+  printf("In index of comma %i", i);
 
   return i;
 }
@@ -135,30 +141,139 @@ static char *subTi(char *originalString) {
   int j = getIndexOfComma(originalString);
    printf("seven");
   char *newString="";
-  newString = strncpy(newString, originalString, j);
+  //newString = strncpy(newString, originalString, j);
+  
   return newString;
 }
 
+static int findArray(char *originalString, int *commaPositions){
+  
+  printf("OriginalString in findArray %s", originalString);
+  
+  
+  int length = strlen(originalString);
+  int j = 0;
+  for (int i=0; i < length; i++){
+    if (i==length){
+      commaPositions[j]=i;
+      j++;
+    }
+    else if (originalString[i]==','){
+      commaPositions[j]=i;
+      j++;
+    }
+  }
+  return j;
+}
+
 static void returnTitle(char *originalTitles, article *titleArray){
-     printf("eight");
+  printf("Original Text %s", originalTitles);
+  
+  int length = strlen(originalTitles);
+  printf("length %i", length);
+  int commaPositions[10] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+  
+  
+  int numberOfCommas = findArray(originalTitles, commaPositions);
+  
+  int commaArray[numberOfCommas];
+  for (int i = 0; i<numberOfCommas; i++) {
+    commaArray[i] = commaPositions[i];
+  }
+  
+  for (int i = 0; i<numberOfCommas; i++){
+    printf("Comma Array in Return Title %i", commaArray[i]);
+  }
+  
+  
+  
+  int k = 0;
+  int j = 0;
+  printf("Right before the while loop");
+  int startIndex = -1;
+  
+  for (int i = 0; i <= numberOfCommas; i++) {
+    int endIndex = commaArray[i]-1;
+    char substr[endIndex-startIndex];
+    
+    strncpy(substr,&originalTitles[startIndex+1],endIndex-startIndex);
+    printf("substr = %s",substr );
+    startIndex = endIndex;
+  } 
+  char substr[length-1-startIndex];
+  strncpy(substr,&originalTitles[startIndex+1],length-1);
+  printf("substr = %s",substr );
+   
+  /*
+  while (){
+    printf("While loop %i", j);
+    if(j==0){
+      char* substr="";
+      strncpy(substr, originalTitles, commaPositions[j+1]-commaPositions[j]-1);
+      
+      article newArticle;
+      newArticle.title = substr;
+      printf("TITLE %s", newArticle.title);
+      titleArray[k] = newArticle;
+      k++;
+    } else if (commaPositions[j+1] == -1 && commaPositions[j]!=-1){
+      //last title
+      char *substr="";
+      strncpy(substr, &originalTitles[commaPositions[j]+2], length-commaPositions[j]);
+      
+      article newArticle;
+      newArticle.title = substr;
+      printf("TITLE %s", newArticle.title);
+      titleArray[k]=newArticle;
+      k++;
+    } else {
+      //middle title
+      char *substr="";
+      strncpy(substr, &originalTitles[commaPositions[j]+2], commaPositions[j+1]-commaPositions[j]-1);
+      
+      article newArticle;
+      newArticle.title = substr;
+      printf("TITLE %s", newArticle.title);
+      titleArray[k]=newArticle;
+      k++;
+    }
+    char* buff = "";
+    strncpy(buff, originalTitles+commaPositions[j], length);
+    originalTitles = buff;
+    j++;
+  }*/
+  
+  /*
+  
   char *substring;
   int i = 0;
-  while(strcmp(originalTitles, "")!=0){
-     printf("nine");
+  //while(strcmp(originalTitles, NULL) != 0){
+  while(strlen(originalTitles) > 0 ){
+    int endIndex = getIndexOfComma(originalTitles);
+    char* substr="";
+    strncpy(substr, originalTitles, endIndex+1);
+    
+    printf("nine");
     printf("before cut %s",originalTitles);
     substring = subTi(originalTitles);
-     printf("ten");
-    strncpy(originalTitles, &originalTitles[strlen(substring)], sizeof(&originalTitles));
+    printf("ten");
+    //strncpy(originalTitles, &originalTitles[strlen(substring)], sizeof(&originalTitles));
     str_cut(originalTitles, 0, strlen(substring));
-     printf("eleven");
+    printf("eleven");
     printf("this is after cuting %s",originalTitles);
     article newArticle;
     
     newArticle.title = substring;
+    
+    article newArticle;
+    newArticle.title = substr;
     titleArray[i] = newArticle;
-      printf("I is about to be incremented and is now,%i", i);
-      i++;
-  }
+    char* buff = "";
+    strncpy(buff, originalTitles+endIndex+1, strlen(originalTitles));
+    originalTitles = buff;
+    printf("I is about to be incremented and is now,%i", i);
+    i++;
+  }*/
 }
 
 static void displayWords(char *originalString){
@@ -256,6 +371,19 @@ static void main_window_unload(Window *window) {
   gbitmap_destroy(s_background_bitmap);
 }
 
+
+////////////
+////////////
+
+///////////
+///////////
+
+
+
+///////////
+
+
+
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // Get the first pair
   Tuple *t = dict_read_first(iterator);
@@ -270,9 +398,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
          // Copy value
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
         article one;
-          printf("article one was instatiated");
+  
         one.title = t->value->cstring;
         returnTitle(one.title, list);
+        
+        for (int i = 0; i < 10; i++) {
+          printf("list %s", list[i].title);
+        }
         
         break;
         case -5:
