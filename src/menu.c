@@ -91,6 +91,47 @@ static void send_int(int key, int value) {
   app_message_outbox_send();
 }
 
+int str_cut(char *str, int begin, int len)
+{
+    int l = strlen(str);
+
+    if (len < 0) len = l - begin;
+    if (begin + len > l) len = l - begin;
+    memmove(str + begin, str + begin + len, l - len + 1);
+
+    return len;
+}
+
+// returns index of first coming punctuation or space
+static int getIndexOfPunctuation(char *originalString) {
+  int i = 0;
+  
+  while(originalString[i] != ' ' && originalString[i] != '.' && originalString[i] != ',' && originalString[i] != '!') {
+    i++;
+  } 
+
+  return i;
+}
+
+static char *subString(char *originalString) {
+  int j = getIndexOfPunctuation(originalString);
+  
+  char *newString="";
+  newString = strncpy(newString, originalString, j);
+  return newString;
+}
+
+static void displayWords(char *originalString){
+  
+  char *substring;
+  while(originalString != NULL){
+    substring = subString(originalString);
+
+    //add sleepB
+    str_cut(originalString, 0, strlen(substring));
+  }
+}
+
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
   //SEND INDEX BACK
@@ -183,19 +224,26 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   while (t != NULL) {
     // Long lived buffer
     static char s_buffer[64];
-
-        // Copy value and display
+      switch(t->key){
+        case -4:
+          //code to assign title
+         // Copy value
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
-        printf("Begin Analysis");
-        //printf("%i",t->key);
-        printf("%s",t->value->cstring);
-        //printf("%d",t->value);
-        printf("End analysis");
         article one;
         one.title = t->value->cstring;
-        one.content = "null";
         list[i] = one;
         i++;
+        
+        break;
+        case -5:
+          //code to display content
+        //call content functions here display words
+        break;
+        case -6:
+          //index #probs wont do
+        break;
+        
+      }
 
     // Get next pair, if any
     t = dict_read_next(iterator);
