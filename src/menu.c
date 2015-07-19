@@ -137,13 +137,13 @@ static void returnTitle(char *originalTitles, article *titleArray){
 }
 
 static void displayWords(char *originalString){
-  
   char *substring;
   while(originalString != NULL){
     substring = subString(originalString);
-
+    printf("%s",substring);
     //add sleepB
     str_cut(originalString, 0, strlen(substring));
+    
   }
 }
 
