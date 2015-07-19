@@ -116,12 +116,9 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 
 static void main_window_load(Window *window) {
   // Here we load the bitmap assets
-  s_menu_icons[0] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_BIG_WATCH);
-  s_menu_icons[1] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_SECTOR_WATCH);
-  s_menu_icons[2] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_BINARY_WATCH);
+  
 
   // And also load the background
-  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BRAINS);
 
   // Now we prepare to initialize the menu layer
   Layer *window_layer = window_get_root_layer(window);
@@ -170,9 +167,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       case KEY_DATA:
         // Copy value and display
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
-        text_layer_set_text(s_output_layer, s_buffer);
-        article one.title = t->value->cstring;
-        list.push(one);
+        //text_layer_set_text(s_output_layer, s_buffer);
+        for (int i = 0; i<10; i++) {
+          article one;
+          one.title = t->value->cstring;
+          list[i] = one;
+        }
+        
         
         break;
     }
@@ -194,7 +195,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
-static void main_window_load(Window *window) {
+/*static void main_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect window_bounds = layer_get_bounds(window_layer);
 
@@ -205,11 +206,13 @@ static void main_window_load(Window *window) {
   text_layer_set_overflow_mode(s_output_layer, GTextOverflowModeWordWrap);
   layer_add_child(window_layer, text_layer_get_layer(s_output_layer));
 }
-
+*/
+/*
 static void main_window_unload(Window *window) {
   // Destroy output TextLayer
   text_layer_destroy(s_output_layer);
 }
+*/
 
 static void init() {
   // Register callbacks
