@@ -1,0 +1,25 @@
+{
+    "appKeys": {
+        "appKeys": 5
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "pitkofsky.j@gmail.com",
+    "longName": "fun",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "fun",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "0ec08ad1-7e68-461f-9c3a-4c48f67ea675",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
