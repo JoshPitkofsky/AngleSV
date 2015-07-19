@@ -4,10 +4,9 @@
  */
 
 #include <pebble.h>
-#define KEY_DATA 5
 #define NUM_MENU_SECTIONS 2
 #define NUM_MENU_ICONS 3
-#define NUM_FIRST_MENU_ITEMS 2
+#define NUM_FIRST_MENU_ITEMS 10
 #define NUM_SECOND_MENU_ITEMS 1
 
 static Window *s_main_window;
@@ -19,6 +18,8 @@ typedef struct {
   char *title;
   char *content;
 } article;
+
+int speedX; 
 
 article list[10];
 
@@ -75,6 +76,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
   }
 }
 
+// Called when an item is selected
+// Must 
+// 1) Send the index of item back to the app
+// 2) 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   
   //SEND INDEX BACK
@@ -165,9 +170,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
         // Copy value and display
         snprintf(s_buffer, sizeof(s_buffer), "Received '%s'", t->value->cstring);
-        //text_layer_set_text(s_output_layer, s_buffer);
+        printf("Begin Analysis");
+        //printf("%i",t->key);
+        printf("%s",t->value->cstring);
+        //printf("%d",t->value);
+        printf("End analysis");
         article one;
         one.title = t->value->cstring;
+        one.content = "null";
         list[i] = one;
         i++;
 
@@ -188,24 +198,32 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
-/*static void main_window_load(Window *window) {
-  Layer *window_layer = window_get_root_layer(window);
-  GRect window_bounds = layer_get_bounds(window_layer);
+// Handles data from the accelerometer
+static void data_handler(AccelData *data, uint32_t num_samples) {
+  // Long lived buffer
+  static char s_buffer[128];
 
-  // Create output TextLayer
-  s_output_layer = text_layer_create(GRect(5, 0, window_bounds.size.w - 5, window_bounds.size.h));
-  text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
-  text_layer_set_text(s_output_layer, "Waiting...");
-  text_layer_set_overflow_mode(s_output_layer, GTextOverflowModeWordWrap);
-  layer_add_child(window_layer, text_layer_get_layer(s_output_layer));
+  float avgData = (data[0].x + data[1].x + data[2].x)/3;
+  
+  if (avgData > -10 && avgData < 10) {
+    
+  } else if (avgData <= -10 && avgData > -20) {
+    speedX = -5;
+  } else if (avgData <= -20{
+    speedX = -10;
+  } else if (avgData >= 10 && avgData <20) {
+    speedX = 5;
+  } else if (avgData >= 20) {
+    speedX = 10;
+  }
+  
+  snprintf(s_buffer, sizeof(s_buffer),
+    "N %d", speedX
+  );
+
+  //Show the data
+  printf("speedX %i", speedX);
 }
-*/
-/*
-static void main_window_unload(Window *window) {
-  // Destroy output TextLayer
-  text_layer_destroy(s_output_layer);
-}
-*/
 
 static void init() {
   // Register callbacks
@@ -217,6 +235,18 @@ static void init() {
   // Open AppMessage
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 
+  
+  // Accelerometer initialization
+  speedX = 0;
+  
+  int num_samples = 3;
+  accel_data_service_subscribe(num_samples, data_handler);
+
+  // Choose update rate
+  accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+  
+  
+  
   // Create main Window
   s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {

@@ -1,4 +1,4 @@
-#include <pebble.h>
+/*#include <pebble.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -99,25 +99,19 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
     
     //psleep(2000);
     //text_layer_set_text(text_layer, "For Real");
-    /*for(int i=0; i<=5;i++){
+    for(int i=0; i<=5;i++){
       text_layer_set_text(text_layer, list[0].content[i]);
     psleep(200);
-    }*/
+    }
     
     
     }
 
 }
-
-
+*/
+/*
 static void main_window_load(Window *window) {
   // Here we load the bitmap assets
-  s_menu_icons[0] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_BIG_WATCH);
-  s_menu_icons[1] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_SECTOR_WATCH);
-  s_menu_icons[2] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_BINARY_WATCH);
-
-  // And also load the background
-  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BRAINS);
 
   // Now we prepare to initialize the menu layer
   Layer *window_layer = window_get_root_layer(window);
@@ -186,4 +180,4 @@ int main(void) {
   init();
   app_event_loop();
   deinit();
-}
+}*/
